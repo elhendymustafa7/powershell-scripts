@@ -114,7 +114,7 @@ $App_Pools = @("gateway","frontend","uploads","backend","inbox","bot","webchatBa
 
 
 function AddUesrToDir ($UserName) {
-    $UserInfo = Get-LocalUser -Name $UserName -ErrorAction SilentlyContinue
+    # $UserInfo = Get-LocalUser -Name $UserName -ErrorAction SilentlyContinue
     LogInformation   "- Adding user '$UserName' "
     New-LocalUser -Name $UserName -NoPassword -ErrorAction SilentlyContinue
     if ( $?) {
@@ -179,7 +179,7 @@ function RunExeProgram ($PogramName) {
 
 function StartService ($ServiceName) {
     $service = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
-    if ($service -eq $null) {
+    if ($null -eq $service) {
         LogError "  Service '$ServiceName' does not exist.`n"
     } else {
             LogInformation "- Setting service $ServiceName as Automatic"
@@ -211,7 +211,6 @@ function CreateFolder ($FolderName) {
     LogInformation "- Creating dir $FolderName ..."
     LogDebug "  Creating dir $FolderName ..."
     if (-not (Test-Path -Path $FolderName -PathType Container)) {
-        # Create the directory
         New-Item -ItemType Directory -Path $FolderName
         LogSuccess "  Create dir $FolderName successfully!`n"
     }
@@ -225,7 +224,7 @@ function CreateAppPool ($applicationPoolName) {
     $existingAppPool = $serverManager.ApplicationPools | Where-Object { $_.Name -eq $applicationPoolName }
     LogInformation "- Creating application pool $applicationPoolName ..."
     LogDebug "  Creating application pool $applicationPoolName ..."
-    if ($existingAppPool -eq $null) {
+    if ($null -eq $existingAppPool) {
         $newAppPool = $serverManager.ApplicationPools.Add($applicationPoolName)
         $newAppPool.ManagedRuntimeVersion = "v4.0"
         $newAppPool.ManagedPipelineMode = "Integrated"
@@ -259,7 +258,7 @@ function CreateApplication($arrOfAppInfo) {
     $App =  Get-WebApplication -Site $arrOfAppInfo["Site"] -Name $arrOfAppInfo["Name"]
     LogInformation "- Creating app $Name ..."
     LogDebug "  Creating app $Name ..."
-    if ($App -ne $null) {
+    if ($null -ne $App) {
         LogWarning "  The application $Name  exists in IIS.`n"
     } else {
         New-WebApplication -Name $arrOfAppInfo["Name"]  -Site $arrOfAppInfo["Site"] -PhysicalPath $arrOfAppInfo["Path"] -ApplicationPool $arrOfAppInfo["App_Pool"]
@@ -343,7 +342,7 @@ try{
 
     RunMSIProgram $URLRewrite
 
-    cd $DefaultAppPath -ErrorAction Stop
+    Set-Location $DefaultAppPath -ErrorAction Stop
     LogInformation "- Go to $DefaultAppPath"
     
     # Create dirs
