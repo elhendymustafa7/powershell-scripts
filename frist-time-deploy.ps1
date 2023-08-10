@@ -6,7 +6,7 @@
     * HostBundle with name "dotnet-hosting-3.1.32-win.exe"
     * Java JDK with name "jdk-19_windows-x64_bin.msi"
     * URL Rewrite with name "rewrite_amd64_en-US.msi"
-    
+
 .INPUTS
 - Redis password to add in redis config files
 - Domain to add in iisstart.html
@@ -68,28 +68,28 @@ param(
     [Parameter(Position = 0, mandatory)]
     [string]$Redis_Password,
     [Parameter(Position = 1, mandatory)]
-    [string]$Domain, 
-    [string]$Redis_Database_line = 113,
-    
-    [string]$DefaultAppPath = "C:\inetpub\wwwroot",
-    [string]$DefaultPrgramPath = "C:\packages",
-    [string]$RedisConfigFile1 = "C:\Program Files\Redis\redis.windows.conf",
-    [string]$RedisConfigFile2 = "C:\Program Files\Redis\redis.windows-service.conf",
-    [string]$JavaVariable = "JAVA_HOME",
-    [string]$InetpubPath = "C:\inetpub",
-    [string]$JavaInstallationPath = "C:\Program Files\Java\jdk-19",
-    
-    [Collections.Generic.List[Object]]$Users = @("Users","IIS_IUSRS"),
-    
-    [string]$ActiveMQserviceName = "ActiveMQ",
-    [string]$RedisServiceName ="Redis",
-    
-    [string]$ActiveMQinstallation = "apache-activemq-5.18.2\bin\win64\InstallService.bat",
-    [string]$RedisProgramName= "Redis-x64-3.0.504.msi",
-    [string]$ActiveMQ_JDK = "jdk-19_windows-x64_bin.msi",
-    [string]$HostBundle = "dotnet-hosting-3.1.32-win.exe",
-    [string]$URLRewrite = "rewrite_amd64_en-US.msi"
+    [string]$Domain
 )
+$Redis_Database_line = 113
+
+$DefaultAppPath = "C:\inetpub\wwwroot"
+$DefaultPrgramPath = "C:\packages"
+$RedisConfigFile1 = "C:\Program Files\Redis\redis.windows.conf"
+$RedisConfigFile2 = "C:\Program Files\Redis\redis.windows-service.conf"
+$JavaVariable = "JAVA_HOME"
+$InetpubPath = "C:\inetpub"
+$JavaInstallationPath = "C:\Program Files\Java\jdk-19"
+
+$Users = @("Users","IIS_IUSRS")
+
+$ActiveMQserviceName = "ActiveMQ"
+$RedisServiceName ="Redis"
+
+$ActiveMQinstallation = "apache-activemq-5.18.2\bin\win64\InstallService.bat"
+$RedisProgramName= "Redis-x64-3.0.504.msi"
+$ActiveMQ_JDK = "jdk-19_windows-x64_bin.msi"
+$HostBundle = "dotnet-hosting-3.1.32-win.exe"
+$URLRewrite = "rewrite_amd64_en-US.msi"
 
 $Dirs_Paths = @("root","root2","root/backend","root/bot","root/inbox","root/webchat","root/analytics","root/auth","root/integrations","root2/gateway","root2/frontend","root2/webchat","root2/uploads")
 $App_Details = @(
@@ -139,7 +139,6 @@ function AddFullPermissionToDir ($FolderPath,$UserName){
 
 
 function RunMSIProgram ($PogramName) { 
-
     $msiFilePath = "$DefaultPrgramPath\$PogramName"
     LogInformation "- Executing program $PogramName "
     LogDebug "  executing program $PogramName "
@@ -180,7 +179,6 @@ function RunExeProgram ($PogramName) {
 
 function StartService ($ServiceName) {
     $service = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
-
     if ($service -eq $null) {
         LogError "  Service '$ServiceName' does not exist.`n"
     } else {
