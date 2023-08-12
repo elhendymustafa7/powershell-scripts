@@ -1,0 +1,53 @@
+function LogDebug($message) {
+    Write-Host -ForegroundColor DarkGray $message
+}
+
+function LogInformation($message) {
+    Write-Host -ForegroundColor Cyan $message
+}
+
+function LogSuccess($message) {
+    Write-Host -ForegroundColor Green $message
+}
+
+function LogWarning($message) {
+    Write-Host -ForegroundColor Yellow $message
+}
+
+function LogError($message) {
+    Write-Host -ForegroundColor Red $message
+}
+
+function ExitFromScript($message,$line,$details) {
+    $message = $_.Exception.Message
+    $line = $_.InvocationInfo.ScriptLineNumber
+    $details = $_.CategoryInfo 
+    LogError "An Error has occurred: $message 
+        `nline: $line
+        `nError Details: $details"
+    LogWarning "Stopping the script.`n"
+    LogWarning "Press any key...`n"
+    $null = Read-Host
+    Exit
+}
+
+function StartService ($ServiceName) {
+    $service = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
+    if ($null -eq $service) {
+        LogError "  Service '$ServiceName' does not exist.`n"
+    } else {
+            LogInformation "- Setting service $ServiceName as Automatic"
+            Set-Service -Name $ServiceName  -StartupType Automatic
+            LogSuccess "  set service $ServiceName as Automatic`n"
+            LogInformation "  starting service $ServiceName successfully!"
+            Start-Service -Name $ServiceName
+            LogSuccess "  started service $ServiceName successfully!`n"
+    }
+}
+
+param(
+    [Parameter(Position = 0, mandatory)]
+    [string]$ServiceName
+)
+
+StartService $ServiceName
